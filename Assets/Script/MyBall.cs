@@ -5,6 +5,7 @@ using UnityEngine;
 public class MyBall : MonoBehaviour
 {   //선언 -> 초기화 -> 호출
     //velocity 현재 이동 속도
+    //FixedUpdate() rigid같은 연산자는 FixedUpdate()를 권장함
     //AddForce(Vec) : Vec의 방향과 크기로 힘을 줌 
     //ForceMode : 힘을 주는 방식(가속, 무게 반영)
     //AddTorque(Vec) : Vec 방향을 축으로 회전력이 생김 [Vec을 축으로 삼음 이동방향 주의]
