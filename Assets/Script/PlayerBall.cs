@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerBall : MonoBehaviour
 {
-    public int itemCount;
     public float jumpPower = 20;
+    public int itemCount;
+    public GameManagerLogic manager;
+
     bool isJump;
     Rigidbody rigid; //초기화 넣어줄 변수 rigid.000  (물리 효과)
+  new AudioSource audio;
     
     void Awake()
     {
         isJump = false;  //default 값 false = 점프 하지않고있음
         rigid = GetComponent<Rigidbody>(); //Rigidbody 컴포넌트 초기화
+        audio = GetComponent<AudioSource>();
     }
 
     private void Update() {
@@ -35,16 +40,45 @@ public class PlayerBall : MonoBehaviour
     private void FixedUpdate() { //기본적인 이동
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
-        rigid.AddForce(new Vector3(h, 0, v), ForceMode.Impulse);
 
+        rigid.AddForce(new Vector3(h, 0, v), ForceMode.Impulse);
     }
     // 바닥(floor)에 물리적인 충돌로 인해 !isJump의 조건을 맞춰준다면 계속 점프 가능
     // Colider(없으면 추가) -> Is Trigger 체크
+
     private void OnCollisionEnter(Collision collision) {
-        if(collision.gameObject.name == "Floor") {
+        if(collision.gameObject.tag == "Floor") {
             isJump = false; //바닥에 착지했으니 점프 중이 아니다.
         }
         
+    }
+
+    //stage 이동 ~
+    //문자열에서 숫자를 + 해도 문자열이 됨  //보험 --> .ToString()
+   void OnTriggerEnter(Collider other) {
+        //other가 어떤 게임오브젝트인지를 알려주어야한다.
+        if(other.tag == "Banana") {
+            itemCount++;
+            audio.Play();
+            other.gameObject.SetActive(false);
+        } else if (other.tag == "Finish") {
+            //GameObject.FindGameObjectWithTag
+            if(itemCount == manager.totalItemCount) {
+                //Game Clear!~ && Next Stage
+               if (manager.stage == 2){
+                    SceneManager.LoadScene(0);
+               } else {
+                SceneManager.LoadScene(manager.stage + 1);
+                 //SceneManager.LoadScene("Example1_" + (manager.stage+1).ToString());
+               }
+            } 
+            else {
+                //Restart..
+                SceneManager.LoadScene(manager.stage);
+                //SceneManager.LoadScene("Example1_" + manager.stage.ToString());
+            }
+        }
+        //Find 계열 함수는 부하를 초래할 수 있음
     }
 }
 
