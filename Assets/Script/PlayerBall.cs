@@ -61,7 +61,9 @@ public class PlayerBall : MonoBehaviour
             itemCount++;
             audio.Play();
             other.gameObject.SetActive(false);
-        } else if (other.tag == "Finish") {
+            manager.GetItem(itemCount);
+        } 
+        else if (other.tag == "Finish") {
             //GameObject.FindGameObjectWithTag
             if(itemCount == manager.totalItemCount) {
                 //Game Clear!~ && Next Stage
